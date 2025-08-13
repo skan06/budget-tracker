@@ -1,0 +1,83 @@
+<div class="container">
+  <header>
+    <h1>💰 Personal Budget Tracker</h1>
+    <p class="subtitle">Keep track of your expenses with ease</p>
+  </header>
+
+  <!-- Add/Edit Form -->
+  <section class="form-section">
+    <h2>{{ editingId ? 'Edit Expense' : 'Add New Expense' }}</h2>
+    <form (ngSubmit)="onSubmit()" #expenseForm="ngForm">
+      <div class="form-group">
+        <label for="description">Description</label>
+        <input
+          type="text"
+          id="description"
+          name="description"
+          [(ngModel)]="newExpense.description"
+          class="form-control"
+          placeholder="e.g., Groceries, Rent, Courses"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="amount">Amount ($)</label>
+        <input
+          type="number"
+          id="amount"
+          name="amount"
+          [(ngModel)]="newExpense.amount"
+          class="form-control"
+          step="0.01"
+          min="0.01"
+          placeholder="0.00"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="date">Date</label>
+        <input
+          type="date"
+          id="date"
+          name="date"
+          [(ngModel)]="newExpense.date"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="!isValidExpense()" class="btn btn-primary">
+          {{ editingId ? 'Update Expense' : 'Add Expense' }}
+        </button>
+        <button type="button" (click)="onCancel()" *ngIf="editingId" class="btn btn-secondary">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Expenses List -->
+  <section class="list-section">
+    <h2>📋 Your Expenses</h2>
+    <div *ngIf="expenses.length === 0" class="empty-state">
+      No expenses yet. Add one above!
+    </div>
+
+    <div class="expenses-grid">
+      <div class="expense-card" *ngFor="let expense of expenses">
+        <div class="expense-header">
+          <h3>{{ expense.description }}</h3>
+          <span class="amount">${{ expense.amount | number:'1.2-2' }}</span>
+        </div>
+        <p class="date">📅 {{ expense.date }}</p>
+        <div class="card-actions">
+          <button (click)="startEdit(expense)" class="btn btn-sm btn-outline">Edit</button>
+          <button (click)="deleteExpense(expense.id!)" class="btn btn-sm btn-danger">Delete</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
