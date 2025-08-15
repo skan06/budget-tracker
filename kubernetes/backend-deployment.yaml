@@ -24,7 +24,10 @@ spec:
             - name: SPRING_DATASOURCE_USERNAME
               value: "postgres"
             - name: SPRING_DATASOURCE_PASSWORD
-              value: "root"
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: spring-datasource-password
 ---
 apiVersion: v1
 kind: Service
@@ -37,4 +40,4 @@ spec:
     - protocol: TCP
       port: 8081
       targetPort: 8081
-  type: ClusterIP
+  type: LoadBalancer

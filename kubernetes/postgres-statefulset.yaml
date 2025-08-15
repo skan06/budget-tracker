@@ -20,7 +20,10 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_PASSWORD
-              value: "root"
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: postgres-password
             - name: POSTGRES_DB
               value: "postgres"
           volumeMounts:
