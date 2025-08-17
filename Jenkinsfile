@@ -53,6 +53,12 @@ pipeline {
             }
         }
 
+        stage('Verify JAR Exists') {
+            steps {
+                bat 'dir backend\\target'
+            }
+        }
+        
         stage('Docker Build') {
             steps {
                 bat "docker build -t %BACKEND_IMAGE% -f backend/Dockerfile ."
