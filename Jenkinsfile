@@ -62,7 +62,9 @@ pipeline {
         stage('Docker Build') {
             steps {
                 bat "docker build --no-cache -t %BACKEND_IMAGE% -f backend/Dockerfile ."
-                bat "docker build --no-cache -t %FRONTEND_IMAGE% -f frontend/Dockerfile ."
+                dir('frontend') {
+                    bat "docker build --no-cache -t %FRONTEND_IMAGE% ."
+                }
             }
         }
 
