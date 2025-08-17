@@ -17,7 +17,7 @@ pipeline {
             steps {
                 git branch: 'main',
                      url: 'https://github.com/skan06/budget-tracker.git',
-                     credentialsId: 'github-credentials'  // Use your GitHub token
+                     credentialsId: 'github-credentials'
             }
         }
 
@@ -55,8 +55,8 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                bat 'docker build -t ${BACKEND_IMAGE} -f backend/Dockerfile .'
-                bat 'docker build -t ${FRONTEND_IMAGE} -f frontend/Dockerfile .'
+                bat "docker build -t %BACKEND_IMAGE% -f backend/Dockerfile ."
+                bat "docker build -t %FRONTEND_IMAGE% -f frontend/Dockerfile ."
             }
         }
 
