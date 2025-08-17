@@ -3,16 +3,15 @@ FROM maven:3.9.11 AS builder
 
 WORKDIR /app
 
-# Copy pom.xml and download dependencies (for caching)
+# Copy pom.xml and download dependencies
 COPY backend/pom.xml .
 
-# Download dependencies first (cached if pom.xml doesn't change)
 RUN mvn dependency:go-offline
 
-# Copy the rest of the source code
+# Copy source code
 COPY backend/src ./src
 
-# Build the JAR file
+# Build the JAR
 RUN mvn clean package -DskipTests
 
 # Stage 2: Runtime
@@ -20,11 +19,9 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-# Copy the JAR from the builder stage
-COPY --from=builder /app/backend/target/budget-tracker-backend-0.0.1-SNAPSHOT.jar app.jar
+# Correct path: JAR is in /app/target, not /app/backend/target
+COPY --from=builder /app/target/budget-tracker-backend-0.0.1-SNAPSHOT.jar app.jar
 
-# Expose port 8081
 EXPOSE 8081
 
-# Run the Spring Boot app
 ENTRYPOINT ["java", "-jar", "app.jar"]
