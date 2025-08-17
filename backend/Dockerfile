@@ -1,5 +1,5 @@
 # Stage 1: Build and Package
-FROM maven:3.9.11-openjdk-17 AS builder
+FROM maven:3.9.11 AS builder
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-# ✅ Copy the JAR from the builder stage (with correct path)
+# Copy the JAR from the builder stage
 COPY --from=builder /app/backend/target/budget-tracker-backend-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose port 8081
