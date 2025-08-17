@@ -15,8 +15,8 @@ FROM nginx:alpine
 # Remove default Nginx config
 RUN rm -rf /etc/nginx/conf.d/*
 
-# Copy custom Nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Fix: Use correct path
+COPY ./frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy built Angular app
 COPY --from=builder /app/dist/frontend/browser /usr/share/nginx/html

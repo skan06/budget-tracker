@@ -58,11 +58,11 @@ pipeline {
                 bat 'dir backend\\target'
             }
         }
-        
+
         stage('Docker Build') {
             steps {
-                bat "docker build -t %BACKEND_IMAGE% -f backend/Dockerfile ."
-                bat "docker build -t %FRONTEND_IMAGE% -f frontend/Dockerfile ."
+                bat "docker build --no-cache -t %BACKEND_IMAGE% -f backend/Dockerfile ."
+                bat "docker build --no-cache -t %FRONTEND_IMAGE% -f frontend/Dockerfile ."
             }
         }
 
