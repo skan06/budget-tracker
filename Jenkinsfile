@@ -25,7 +25,7 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir('backend') {
-                    bat 'mvn clean package -DskipTests'
+                    sh 'mvn clean package -DskipTests'
                 }
             }
         }
@@ -33,8 +33,8 @@ pipeline {
         stage('Build Frontend') {
             steps {
                 dir('frontend') {
-                    bat 'npm install'
-                    bat 'npx ng build --configuration production'
+                    sh 'npm install'
+                    sh 'npx ng build --configuration production'
                 }
             }
         }
@@ -43,11 +43,11 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarLocal') {
                     dir('backend') {
-                        bat """
-                        mvn sonar:sonar ^
-                          -Dsonar.projectKey=budget-tracker-backend ^
-                          -Dsonar.host.url=http://localhost:9000 ^
-                          -Dsonar.login=%SONAR_TOKEN%
+                        sh """
+                        mvn sonar:sonar \
+                          -Dsonar.projectKey=budget-tracker-backend \
+                          -Dsonar.host.url=http://host.docker.internal:9000 \
+                          -Dsonar.login=\$SONAR_TOKEN
                         """
                     }
                 }
@@ -56,46 +56,46 @@ pipeline {
 
         stage('Verify JAR Exists') {
             steps {
-                bat 'dir backend\\target'
+                sh 'ls -la backend/target/'
             }
         }
 
         stage('Docker Build') {
             steps {
-                bat "docker build --no-cache -t %BACKEND_IMAGE% -f backend/Dockerfile ."
+                sh "docker build --no-cache -t \$BACKEND_IMAGE -f backend/Dockerfile ."
                 dir('frontend') {
-                    bat "docker build --no-cache -t %FRONTEND_IMAGE% ."
+                    sh "docker build --no-cache -t \$FRONTEND_IMAGE ."
                 }
             }
         }
 
         stage('Load into Minikube') {
             steps {
-                bat 'docker save %BACKEND_IMAGE% -o backend-image.tar'
-                bat 'docker save %FRONTEND_IMAGE% -o frontend-image.tar'
+                sh 'docker save $BACKEND_IMAGE -o backend-image.tar'
+                sh 'docker save $FRONTEND_IMAGE -o frontend-image.tar'
 
-                bat 'minikube cp backend-image.tar /tmp/backend-image.tar'
-                bat 'minikube cp frontend-image.tar /tmp/frontend-image.tar'
+                sh 'minikube cp backend-image.tar /tmp/backend-image.tar'
+                sh 'minikube cp frontend-image.tar /tmp/frontend-image.tar'
 
-                bat 'minikube ssh "docker load -i /tmp/backend-image.tar"'
-                bat 'minikube ssh "docker load -i /tmp/frontend-image.tar"'
+                sh 'minikube ssh "docker load -i /tmp/backend-image.tar"'
+                sh 'minikube ssh "docker load -i /tmp/frontend-image.tar"'
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                bat 'kubectl apply -f kubernetes/postgres-statefulset.yaml'
-                bat 'kubectl apply -f kubernetes/backend-deployment.yaml'
-                bat 'kubectl apply -f kubernetes/frontend-deployment.yaml'
+                sh 'kubectl apply -f kubernetes/postgres-statefulset.yaml'
+                sh 'kubectl apply -f kubernetes/backend-deployment.yaml'
+                sh 'kubectl apply -f kubernetes/frontend-deployment.yaml'
 
-                bat 'kubectl rollout status deployment/backend --timeout=60s'
-                bat 'kubectl rollout status deployment/frontend --timeout=60s'
+                sh 'kubectl rollout status deployment/backend --timeout=60s'
+                sh 'kubectl rollout status deployment/frontend --timeout=60s'
             }
         }
 
         stage('Verify') {
             steps {
-                bat 'minikube service frontend-service --url'
+                sh 'minikube service frontend-service --url'
             }
         }
     }
