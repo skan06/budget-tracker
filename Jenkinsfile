@@ -5,6 +5,7 @@ pipeline {
         BACKEND_IMAGE = 'budget-tracker-backend:latest'
         FRONTEND_IMAGE = 'budget-tracker-frontend:latest'
         SONAR_TOKEN = credentials('sonar-token')
+        GITHUB_CREDENTIALS = credentials('github-credentials')
     }
 
     tools {
@@ -42,12 +43,12 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarLocal') {
                     dir('backend') {
-                        bat '''
+                        bat """
                         mvn sonar:sonar ^
                           -Dsonar.projectKey=budget-tracker-backend ^
                           -Dsonar.host.url=http://localhost:9000 ^
                           -Dsonar.login=%SONAR_TOKEN%
-                        '''
+                        """
                     }
                 }
             }
