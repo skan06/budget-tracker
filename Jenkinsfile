@@ -41,7 +41,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarLocal') {
+                withSonarQubeEnv('sonarLocal') {
                     dir('backend') {
                         sh """
                         mvn sonar:sonar \
@@ -69,16 +69,13 @@ pipeline {
             }
         }
 
-        stage('Load into Minikube') {
+        stage('Load into Docker') {
             steps {
                 sh 'docker save $BACKEND_IMAGE -o backend-image.tar'
                 sh 'docker save $FRONTEND_IMAGE -o frontend-image.tar'
 
-                sh 'minikube cp backend-image.tar /tmp/backend-image.tar'
-                sh 'minikube cp frontend-image.tar /tmp/frontend-image.tar'
-
-                sh 'minikube ssh "docker load -i /tmp/backend-image.tar"'
-                sh 'minikube ssh "docker load -i /tmp/frontend-image.tar"'
+                sh 'docker load -i backend-image.tar'
+                sh 'docker load -i frontend-image.tar'
             }
         }
 
@@ -95,7 +92,7 @@ pipeline {
 
         stage('Verify') {
             steps {
-                sh 'minikube service frontend-service --url'
+                sh 'kubectl get services frontend'
             }
         }
     }
@@ -105,7 +102,7 @@ pipeline {
             echo "🎉 Pipeline succeeded!"
         }
         failure {
-            echo "❌ Pipeline failed!"
+            echo "❌ pipeline failed!"
         }
     }
 }
