@@ -41,7 +41,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarLocal') {
+                withSonarQubeEnv('SonarLocal') {
                     dir('backend') {
                         sh """
                         mvn sonar:sonar \
