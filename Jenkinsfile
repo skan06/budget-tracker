@@ -94,7 +94,8 @@ pipeline {
 
         stage('Verify') {
             steps {
-                sh 'kubectl get services frontend'
+                // Fixed: Service name is frontend-service, not frontend
+                sh 'kubectl get service frontend-service'
             }
         }
     }
