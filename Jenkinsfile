@@ -41,14 +41,16 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarLocal') {
-                    dir('backend') {
-                        sh """
-                        mvn sonar:sonar \
-                          -Dsonar.projectKey=budget-tracker-backend \
-                          -Dsonar.host.url=http://host.docker.internal:9000 \
-                          -Dsonar.login=\$SONAR_TOKEN
-                        """
+                script {
+                    withSonarQubeEnv('SonarLocal') {
+                        dir('backend') {
+                            sh """
+                            mvn sonar:sonar \
+                              -Dsonar.projectKey=budget-tracker-backend \
+                              -Dsonar.host.url=http://host.docker.internal:9000 \
+                              -Dsonar.login=\$SONAR_TOKEN
+                            """
+                        }
                     }
                 }
             }
@@ -102,7 +104,7 @@ pipeline {
             echo "🎉 Pipeline succeeded!"
         }
         failure {
-            echo "❌ pipeline failed!"
+            echo "❌ Pipeline failed!"
         }
     }
 }
