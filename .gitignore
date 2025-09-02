@@ -110,3 +110,29 @@ build/
 # Kubernetes secrets
 kubernetes/secret.yaml
 *.secret.yaml
+
+# =========================
+# = Terraform
+# =========================
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+terraform.tfvars
+# Keep terraform.tfvars.example in version control
+!terraform.tfvars.example
+
+# =========================
+# = Tests
+# =========================
+tests/terratest/go.mod
+tests/terratest/go.sum
+*.test
+coverage.txt
+coverage.html
+
+# =========================
+# = Jenkins
+# =========================
+jenkins_home/
+*.kubeconfig

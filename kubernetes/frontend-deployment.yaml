@@ -28,6 +28,6 @@ spec:
     app: frontend
   ports:
     - protocol: TCP
-      port: 8060          # External port: access your app at http://localhost:8060
-      targetPort: 80      # Internal port: Nginx runs on port 80 inside the pod
+      port: 8060          # Access your app at http://localhost:8060
+      targetPort: 80      # Nginx runs on port 80 inside the container
   type: LoadBalancer
